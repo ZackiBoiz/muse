@@ -114,7 +114,13 @@ const ACTIONS = {
 		state.activeMuses.forEach( muse => muse.stop() );
 		state.activeMuses = [];
 	},
-	EXAMPLES: ({ show }, state) => {
+	EXAMPLES: async ({ show }, state) => {
+    if (show) {
+      const examplesURL = `https://api2.hackclub.com/v0.1/Saved Projects/Muse Projects/?select={"filterByFormula": "{Public}=TRUE()"}`;
+      const json = await fetch(examplesURL, { mode: "cors" }).then(res => res.json());
+      state.examples = json.map(x => x.fields);
+    }
+    
 		state.showExamples = show;
 		dispatch("RENDER");
 	},
@@ -159,16 +165,3 @@ window.dispatch = dispatch;
 window.IS_MUSE_EDITOR = true;
 
 dispatch("INIT");
-
-
-
-
-
-
-
-
-
-
-
-
-
