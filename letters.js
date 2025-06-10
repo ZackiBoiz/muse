@@ -30,25 +30,28 @@ for (let i = 1; i < 10; i++) {
 }
 
 async function playNote(frequency, duration, ctx, ops = {}) {
-  var o = ctx.createOscillator()
-  var g = ctx.createGain()
+  var o = ctx.createOscillator();
+  var g = ctx.createGain();
+  
   o.frequency.value = frequency;
   o.type = ops.type || 'sine';
-  o.connect(g)
-  g.connect(ctx.destination)
+  o.connect(g);
+  g.connect(ctx.destination);
+  
+  const volume = (ops.volume !== undefined ? ops.volume : 100) / 100;
   o.start();
-
-  const endTime = ctx.currentTime + duration*2/1000;
-  o.stop(endTime)
+  const endTime = ctx.currentTime + duration * 2 / 1000;
+  o.stop(endTime);
   
   g.gain.setValueAtTime(0, ctx.currentTime);
-  g.gain.linearRampToValueAtTime(.2, ctx.currentTime + duration/5/1000);
-  g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration/1000)
-  g.gain.linearRampToValueAtTime(0, ctx.currentTime + duration*2/1000) // does this ramp from the last ramp
+  g.gain.linearRampToValueAtTime(volume * 0.2, ctx.currentTime + duration / 5 / 1000);
+  g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration / 1000);
+  g.gain.linearRampToValueAtTime(0, ctx.currentTime + duration * 2 / 1000);
   o.onended = () => {
     g.disconnect();
   };
 }
+
 
 function getLetters(ops) {
   const type = ops.type ?? "sine";
@@ -75,4 +78,3 @@ function getLetters(ops) {
 }
 
 export { getLetters };
-
